@@ -1,0 +1,31 @@
+From 2083db98756751aceaeaaed5e22be2b98e493ac9 Mon Sep 17 00:00:00 2001
+From: sundar <sundar.krishnakumar@colorado.edu>, Rajat <Rajat.Chaple@colorado.edu>
+Date: Tue, 2 Nov 2021 19:10:10 -0600
+Subject: [PATCH] Do not idle the SPIx hwmod at all.
+
+---
+ arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
+index 9ded7bf972e7..47734aadff46 100644
+--- a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
++++ b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
+@@ -886,6 +886,7 @@ struct omap_hwmod am33xx_spi0_hwmod = {
+ 	.name		= "spi0",
+ 	.class		= &am33xx_spi_hwmod_class,
+ 	.clkdm_name	= "l4ls_clkdm",
++	.flags		= HWMOD_NO_IDLE,
+ 	.main_clk	= "dpll_per_m2_div4_ck",
+ 	.prcm		= {
+ 		.omap4	= {
+@@ -899,6 +900,7 @@ struct omap_hwmod am33xx_spi1_hwmod = {
+ 	.name		= "spi1",
+ 	.class		= &am33xx_spi_hwmod_class,
+ 	.clkdm_name	= "l4ls_clkdm",
++	.flags		= HWMOD_NO_IDLE,
+ 	.main_clk	= "dpll_per_m2_div4_ck",
+ 	.prcm		= {
+ 		.omap4	= {
+-- 
+2.25.1
