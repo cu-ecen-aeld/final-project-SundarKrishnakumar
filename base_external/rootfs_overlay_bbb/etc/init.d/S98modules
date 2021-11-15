@@ -1,0 +1,23 @@
+#! /bin/sh 
+# reference: MELP book
+# https://www.thirtythreeforty.net/posts/2020/03/mastering-embedded-linux-part-4-adding-features/
+ 
+case "$1" in
+      start)  
+
+           modprobe adc_spi_low_level.ko
+           modprobe adc_spi_char.ko   
+
+           ;;
+     stop)    
+
+           rmmod adc_spi_low_level.ko
+           rmmod adc_spi_char.ko     
+
+           ;;
+     *)
+           echo "Usage: $0 {start|stop}"
+           exit 1
+esac
+
+exit 0
