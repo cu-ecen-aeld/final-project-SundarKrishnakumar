@@ -165,14 +165,14 @@ sync
 echo "Mounting BOOT and ROOTFS partitions"
 
 # Mount BOOT partition
-if (! mount "/dev/${USD_DEVICE}1" "${MNT_DIR}/boot")
+if (! mount "/dev/${USD_DEVICE}1" "${MNT_DIR}/boot" > /dev/null 2>&1)
 then
 	echo "Cannot mount partition (/dev/${USD_DEVICE}1)"
 	exit 1
 fi
 
 # Mount ROOTFS partition
-if (! mount "/dev/${USD_DEVICE}2" "${MNT_DIR}/rootfs")
+if (! mount "/dev/${USD_DEVICE}2" "${MNT_DIR}/rootfs" > /dev/null 2>&1)
 then
 	echo "Cannot mount partition (/dev/${USD_DEVICE}2)"
 	exit 1
