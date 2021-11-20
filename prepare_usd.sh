@@ -1,10 +1,14 @@
 #!/bin/sh
-#Script to load the bootfiles and rootfs to uSD card (BeagleBoneBlack)
-#Author: Sundar Krishnakumar
-# NOTE: This script must be run from the root of your AESD respository
+# Script to load the bootfiles and rootfs to uSD card (BeagleBoneBlack)
+# Author: Sundar Krishnakumar
 # Dependant packages: parted, mkfs
+# Usage: sudo ./prepare_usd.sh -d /dev/sdX
+# NOTE: 
+# 1. This script is written for Buildroot environment and BeagleBoneBlack hardware
+# 2. This script must be run from the root of your AESD respository.
 
-MNT_DIR=/media
+
+MNT_DIR=/mnt
 
 # Command line input validation
 if [ $# -eq 2 ] && [ $1 = "-d" ]
@@ -35,7 +39,7 @@ USD_DEVICE_PART_TYPE=$(lsblk -r | grep "${USD_DEVICE}" | grep " part " | head -1
 if [ "${USD_DEVICE_PART_TYPE}" != "part" ]
 then
 	echo "uSD device (${USD_DEVICE_PATH}) does not have the first partition"
-	echo "Create it by doing a simple SD card format"
+	echo "Create it first using 'gparted' utility"
 	exit 1
 fi
 
@@ -100,7 +104,7 @@ echo "Partitioning the uSD device (${USD_DEVICE_PATH})"
 echo "Partition1 - BOOT (bootable)"
 echo "Partition2 - ROOTFS"
 
-DO_PARTITION=$(sudo parted -s "${USD_DEVICE_PATH}" -- mklabel msdos \
+DO_PARTITION=$(parted -s "${USD_DEVICE_PATH}" -- mklabel msdos \
     mkpart primary fat16 1MB 256MB 	\
     mkpart primary fat32 256MB 100% > /dev/null 2>&1)
 
@@ -116,7 +120,7 @@ fi
 # Set flags for each partition
 # partition1 flags: boot,lba
 # partition2 flags: None
-DO_PARTITION_FLAGS=$(sudo parted -s ${USD_DEVICE_PATH} set 1 boot on \
+DO_PARTITION_FLAGS=$(parted -s ${USD_DEVICE_PATH} set 1 boot on \
 	set 2 lba off \
 	> /dev/null 2>&1)
 
@@ -158,21 +162,21 @@ fi
 mkdir -p ${MNT_DIR}/boot
 mkdir -p ${MNT_DIR}/rootfs
 
-# Do sync. Very important!
-sync
+
+
 
 # mount BOOT and ROOTFS partitions
 echo "Mounting BOOT and ROOTFS partitions"
 
 # Mount BOOT partition
-if (! mount "/dev/${USD_DEVICE}1" "${MNT_DIR}/boot" > /dev/null 2>&1)
+if (! mount -t vfat "/dev/${USD_DEVICE}1" "${MNT_DIR}/boot" > /dev/null 2>&1)
 then
 	echo "Cannot mount partition (/dev/${USD_DEVICE}1)"
 	exit 1
 fi
 
 # Mount ROOTFS partition
-if (! mount "/dev/${USD_DEVICE}2" "${MNT_DIR}/rootfs" > /dev/null 2>&1)
+if (! mount -t ext4 "/dev/${USD_DEVICE}2" "${MNT_DIR}/rootfs" > /dev/null 2>&1)
 then
 	echo "Cannot mount partition (/dev/${USD_DEVICE}2)"
 	exit 1
@@ -180,14 +184,14 @@ fi
 
 
 # Copy contents into BOOT partition
-cp ./buildroot/output/images/u-boot.img /media/boot
-cp ./buildroot/output/images/zImage /media/boot
-cp ./buildroot/output/images/MLO /media/boot
-cp ./buildroot/output/images/uEnv.txt /media/boot
-cp ./buildroot/output/images/am335x-boneblack.dtb /media/boot
+cp ./buildroot/output/images/u-boot.img ${MNT_DIR}//boot
+cp ./buildroot/output/images/zImage ${MNT_DIR}/boot
+cp ./buildroot/output/images/MLO ${MNT_DIR}/boot
+cp ./buildroot/output/images/uEnv.txt ${MNT_DIR}/boot
+cp ./buildroot/output/images/am335x-boneblack.dtb ${MNT_DIR}/boot
 
 # Copy contents into ROOTFS partition
-tar -xvf ./buildroot/output/images/rootfs.tar -C /media/rootfs > /dev/null 2>&1
+tar -xvf ./buildroot/output/images/rootfs.tar -C ${MNT_DIR}/rootfs > /dev/null 2>&1
 
 # Do sync. Very important!
 sync
