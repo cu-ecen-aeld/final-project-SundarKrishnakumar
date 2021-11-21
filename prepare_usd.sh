@@ -169,14 +169,14 @@ mkdir -p ${MNT_DIR}/rootfs
 echo "Mounting BOOT and ROOTFS partitions"
 
 # Mount BOOT partition
-if (! mount -t vfat "/dev/${USD_DEVICE}1" "${MNT_DIR}/boot" > /dev/null 2>&1)
+if (! mount -t vfat "/dev/${USD_DEVICE}1" "${MNT_DIR}/boot")
 then
 	echo "Cannot mount partition (/dev/${USD_DEVICE}1)"
 	exit 1
 fi
 
 # Mount ROOTFS partition
-if (! mount -t ext4 "/dev/${USD_DEVICE}2" "${MNT_DIR}/rootfs" > /dev/null 2>&1)
+if (! mount -t ext4 "/dev/${USD_DEVICE}2" "${MNT_DIR}/rootfs")
 then
 	echo "Cannot mount partition (/dev/${USD_DEVICE}2)"
 	exit 1
@@ -184,7 +184,7 @@ fi
 
 
 # Copy contents into BOOT partition
-cp ./buildroot/output/images/u-boot.img ${MNT_DIR}//boot
+cp ./buildroot/output/images/u-boot.img ${MNT_DIR}/boot
 cp ./buildroot/output/images/zImage ${MNT_DIR}/boot
 cp ./buildroot/output/images/MLO ${MNT_DIR}/boot
 cp ./buildroot/output/images/uEnv.txt ${MNT_DIR}/boot
