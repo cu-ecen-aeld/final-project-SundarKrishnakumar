@@ -1,5 +1,5 @@
 From 2083db98756751aceaeaaed5e22be2b98e493ac9 Mon Sep 17 00:00:00 2001
-From: sundar <sundar.krishnakumar@colorado.edu>, Rajat <Rajat.Chaple@colorado.edu>
+From: Rajat <Rajat.Chaple@colorado.edu>
 Date: Tue, 2 Nov 2021 19:10:10 -0600
 Subject: [PATCH] Do not idle the SPIx hwmod at all.
 
